@@ -1,7 +1,8 @@
 package com.app.ecom.Controllers;
 
+import com.app.ecom.Model.Dto.UserRequestDto;
+import com.app.ecom.Model.Dto.UserResponseDto;
 import com.app.ecom.Service.UserService;
-import com.app.ecom.Model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +20,20 @@ public class UserController {
     //    ResponseEntity gives you control over the HTTP response.
     //    Without ResponseEntity, Spring automatically returns 200 OK. Not ideal since the endpoint will have multiple outcomes not just success case.
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
     //        return ResponseEntity.ok(userService.getAllUsers());
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers());
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody User user) {
+    public ResponseEntity<String> createUser(@RequestBody UserRequestDto user) {
         // @RequestBody tells spring: Take the JSON from the HTTP request body and convert it into a Java object.
         userService.addUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable Long id) {
         // @PathVariable tells Spring:
         // Take a value from the URL path and pass it as a method parameter.
           return userService.getUserById(id)
@@ -47,7 +48,7 @@ public class UserController {
 //     .map(ResponseEntity::ok)
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody UserRequestDto user) {
         boolean updated = userService.updateUser(id, user);
         if (updated) {
             return ResponseEntity.status(HttpStatus.OK).body("User updated");

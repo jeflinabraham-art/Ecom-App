@@ -37,6 +37,8 @@ public class User {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
+
+    // below field need not be passed to JSON
     @CreationTimestamp
     private LocalDateTime createdAt;
 
