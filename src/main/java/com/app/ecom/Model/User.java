@@ -38,7 +38,7 @@ public class User {
     private Address address;
 
 
-    // below field need not be passed to JSON
+    // below field need not be passed to JSON, jpa inserts these fields to the table automatically.
     @CreationTimestamp
     private LocalDateTime createdAt;
 
