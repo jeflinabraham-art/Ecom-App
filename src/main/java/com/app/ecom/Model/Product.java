@@ -1,9 +1,6 @@
 package com.app.ecom.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +10,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@Entity(name = "product_table")
+@Entity
+
+// product_table is the table name in database.
+@Table(name = "product_table")
 @NoArgsConstructor
 public class Product {
     @Id
@@ -25,6 +25,7 @@ public class Product {
     private Integer stockQuantity;
     private String category;
     private String imageUrl;
+    private Boolean active = true;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
