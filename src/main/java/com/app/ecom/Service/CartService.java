@@ -2,15 +2,19 @@ package com.app.ecom.Service;
 
 import com.app.ecom.Model.CartItem;
 import com.app.ecom.Model.Dto.CartItemRequestDto;
+import com.app.ecom.Model.Dto.CartItemResponseDto;
 import com.app.ecom.Model.Product;
 import com.app.ecom.Model.User;
 import com.app.ecom.Repository.CartItemRepository;
 import com.app.ecom.Repository.ProductRepository;
 import com.app.ecom.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,4 +68,50 @@ public class CartService {
         }
         return true;
     }
+
+    // INSERT, UPDATE, DELETE → modify data → require a transaction.
+    // transaction will already exist for build-in JPA functions like delete(), save()...
+    @Transactional
+    public boolean deleteFromCart(String UserId, Long ProductId) {
+        Optional<Product> productOpt = productRepository.findById(ProductId);
+        if(productOpt.isEmpty()) {
+            return false;
+        }
+        Product product = productOpt.get();
+
+        Optional<User> userOpt = userRepository.findById(Long.valueOf(UserId));
+        if(userOpt.isEmpty()) {
+            return false;
+        }
+        User user = userOpt.get();
+
+        CartItem cartItem = cartItemRepository.deleteByUserAndProduct(user, product);
+        return true;
+    }
+
+    public List<CartItemResponseDto> getCartItems(String userId) {
+        Optional<User> userOpt = userRepository.findById(Long.valueOf(userId));
+        if(userOpt.isEmpty()) {
+            return new ArrayList<>();
+        }
+        User user = userOpt.get();
+        return cartItemRepository.findByUser(user)
+                .stream()
+                .map(this::toResponseDto)
+                .toList();
+    }
+
+    public CartItemResponseDto toResponseDto(CartItem cartItem) {
+        CartItemResponseDto cartItemResponseDto = new CartItemResponseDto();
+        cartItemResponseDto.setId(cartItem.getId());
+        cartItemResponseDto.setUserId(cartItem.getUser().getId());
+        cartItemResponseDto.setProductId(cartItem.getProduct().getId());
+        cartItemResponseDto.setProductName(cartItem.getProduct().getName());
+        cartItemResponseDto.setQuantity(cartItem.getQuantity());
+        cartItemResponseDto.setPrice(cartItem.getPrice());
+        cartItemResponseDto.setCreatedAt(cartItem.getCreatedAt());
+        cartItemResponseDto.setUpdatedAt(cartItem.getUpdatedAt());
+        return cartItemResponseDto;
+    }
+
 }
