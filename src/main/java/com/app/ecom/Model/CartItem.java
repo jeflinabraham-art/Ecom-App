@@ -19,8 +19,15 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // why @ManyToOne needed ?
+    // JPA sees:
+    // This is a field of type User. How am I supposed to store this object in one database column? So Without @ManyToOne → JPA treats User as a normal field and cannot store the entire object in one column [ERROR].
 
-    // Many objects of this entity belong to one User.
+    // with @ManytoOne:
+    // JPA understands:
+    // This field represents a relationship. I'll store only user_id in the database. So with @ManyToOne → JPA treats User as a relationship and creates/manages the foreign key automatically.
+
+    // one user can have many items in the cart
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
