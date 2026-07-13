@@ -1,0 +1,52 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: postgres-db
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecom_db
+
+    ports:
+      - "5432:5432"
+
+#  Without a volume:
+#  Database files are stored inside container.
+#
+#  stop and remove the container: docker compose down
+#  Everything is lost.
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+#   With a volume:
+#   PostgreSQL writes all of its database files to: /var/lib/postgresql/data
+#   Docker stores those files in the named volume postgres-data.
+
+#   Now if you run: docker compose down
+#   the container is removed, but the volume remains, so your data is still there.
+
+#   Create another PostgreSQL container using the same volume:
+#   New PostgreSQL Container
+#   │
+#   ▼
+#   same volume: postgres-data
+#   All your tables and data will still be there.
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+
+    ports:
+      - "5050:80"
+
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  postgres-data:
+  pgadmin-data:
